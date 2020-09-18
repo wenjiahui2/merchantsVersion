@@ -1,96 +1,110 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+    <div class="box">
+      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
-      <div class="title-container">
-        <h3 class="title">Login Form</h3>
-      </div>
+        <div class="title-container">
+          <div class="logo"><img src="../../assets/u19.png"></div>
+        <!-- <h3 class="title">
+          {{ $t('login.title') }}
+        </h3>
+        <lang-select class="set-language" /> -->
+        </div>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
-
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
+        <el-form-item prop="username">
           <span class="svg-container">
-            <svg-icon icon-class="password" />
+            <svg-icon icon-class="user" />
           </span>
           <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            placeholder="Password"
-            name="password"
-            tabindex="2"
+            ref="username"
+            v-model="loginForm.username"
+            :placeholder="$t('login.username')"
+            name="username"
+            type="text"
+            tabindex="1"
             autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
           />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
         </el-form-item>
-      </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+        <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+          <el-form-item prop="password">
+            <span class="svg-container">
+              <svg-icon icon-class="password" />
+            </span>
+            <el-input
+              :key="passwordType"
+              ref="password"
+              v-model="loginForm.password"
+              :type="passwordType"
+              :placeholder="$t('login.password')"
+              name="password"
+              tabindex="2"
+              autocomplete="on"
+              @keyup.native="checkCapslock"
+              @blur="capsTooltip = false"
+              @keyup.enter.native="handleLogin"
+            />
 
-      <div style="position:relative">
+          </el-form-item>
+        </el-tooltip>
+        <div class="input1">
+          <el-row :gutter="20">
+            <el-col :span="6"><el-checkbox v-model="ruleForm2.checked">记住密码</el-checkbox></el-col>
+            <el-col :span="4" :offset="14"><span style="font-size:14px" @click="forget">忘记密码</span></el-col>
+          </el-row>
+        </div>
+        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;margin-top:20px;" @click.native.prevent="handleLogin">
+          {{ $t('login.logIn') }}
+        </el-button>
+
+      <!-- <div style="position:relative">
         <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
+          <span>{{ $t('login.username') }} : admin</span>
+          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
         </div>
         <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
+          <span style="margin-right:18px;">
+            {{ $t('login.username') }} : editor
+          </span>
+          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
         </div>
 
         <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Or connect with
+          {{ $t('login.thirdparty') }}
         </el-button>
-      </div>
-    </el-form>
+      </div> -->
+      </el-form>
 
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
+      <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
+        {{ $t('login.thirdpartyTips') }}
+        <br>
+        <br>
+        <br>
+        <social-sign />
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
+import LangSelect from '@/components/LangSelect'
 import SocialSign from './components/SocialSignin'
 
 export default {
   name: 'Login',
-  components: { SocialSign },
+  components: { LangSelect, SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请输入正确的用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码不能少于6位'))
       } else {
         callback()
       }
@@ -109,13 +123,20 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      ruleForm2: {
+        pass: '',
+        checkPass: '',
+        name: '',
+        checked: ''
+      }
     }
   },
   watch: {
     $route: {
       handler: function(route) {
         const query = route.query
+        console.log(query)
         if (query) {
           this.redirect = query.redirect
           this.otherQuery = this.getOtherQuery(query)
@@ -142,22 +163,20 @@ export default {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
     },
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
+    forget() {
+      console.log(1111111)
+      this.$router.push(`/password`)
+      // this.$router.push('/password')
+      //  this.$router.push('')
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
+        console.log(valid)
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
+              console.log(this.redirect, this.otherQuery)
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
@@ -175,6 +194,7 @@ export default {
         if (cur !== 'redirect') {
           acc[cur] = query[cur]
         }
+        console.log(acc)
         return acc
       }, {})
     }
@@ -216,6 +236,7 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
+  background:rgba(106, 126, 153, 1) !important;
   .el-input {
     display: inline-block;
     height: 47px;
@@ -262,11 +283,12 @@ $light_gray:#eee;
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
+    background-color: #fff;
+    padding: 28px 35px 0;
     margin: 0 auto;
     overflow: hidden;
+    margin-top: 50px;
   }
-
   .tips {
     font-size: 14px;
     color: #fff;
@@ -289,13 +311,22 @@ $light_gray:#eee;
 
   .title-container {
     position: relative;
-
+    margin-bottom: 38px;
     .title {
       font-size: 26px;
       color: $light_gray;
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;
+    }
+
+    .set-language {
+      color: #fff;
+      position: absolute;
+      top: 3px;
+      font-size: 18px;
+      right: 0px;
+      cursor: pointer;
     }
   }
 
@@ -314,7 +345,16 @@ $light_gray:#eee;
     right: 0;
     bottom: 6px;
   }
-
+.logo{
+  width:88px;
+  height: 86px;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+.logo img{
+    width: 100%;
+    height: 100%;
+}
   @media only screen and (max-width: 470px) {
     .thirdparty-button {
       display: none;

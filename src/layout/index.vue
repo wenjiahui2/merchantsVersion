@@ -1,16 +1,19 @@
 <template>
   <div :class="classObj" class="app-wrapper">
+    <div class="navbar">
+      <navbar />
+    </div>
+
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <sidebar class="sidebar-container" />
     <div :class="{hasTagsView:needTagsView}" class="main-container">
-      <div :class="{'fixed-header':fixedHeader}">
+      <!-- <div :class="{'fixed-header':fixedHeader}">
         <navbar />
-        <tags-view v-if="needTagsView" />
-      </div>
+      </div> -->
       <app-main />
-      <right-panel v-if="showSettings">
+      <!-- <right-panel >
         <settings />
-      </right-panel>
+      </right-panel> -->
     </div>
   </div>
 </template>
@@ -49,6 +52,9 @@ export default {
       }
     }
   },
+  mounted() {
+    console.log(this.showSettings)
+  },
   methods: {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
@@ -60,11 +66,22 @@ export default {
 <style lang="scss" scoped>
   @import "~@/styles/mixin.scss";
   @import "~@/styles/variables.scss";
-
+.navbar{
+  position: fixed;
+    font-size: 0px;
+    top: 0;
+    // bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+}
+.main-container{
+  margin-top: 80px;
+}
   .app-wrapper {
     @include clearfix;
     position: relative;
-    height: 100%;
+    // height: 100%;
     width: 100%;
 
     &.mobile.openSidebar {
@@ -98,5 +115,8 @@ export default {
 
   .mobile .fixed-header {
     width: 100%;
+  }
+  .menu{
+    width: 200px;
   }
 </style>

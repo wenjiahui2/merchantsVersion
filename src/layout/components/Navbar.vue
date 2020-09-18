@@ -1,24 +1,22 @@
 <template>
   <div class="navbar">
-    <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
-
+    <!-- <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" /> -->
+    <img class="logoing" src="../../assets/logo.png" @click="toggleClick">
+    <p class="p1">营业中/已打烊</p>
+    <img class="setimg" src="../../assets/set.png">
+    <!-- <breadcrumb id="breadcrumb-container" class="breadcrumb-container" /> -->
+    <a class="a1" @click="logout"><i class="el-icon-setting" />退出登录</a>
+    <a class="a2"><i class="el-icon-setting" />账户设置</a>
     <div class="right-menu">
-      <template v-if="device!=='mobile'">
-        <search id="header-search" class="right-menu-item" />
+      <!-- <template v-if="device!=='mobile'">
+        <router-link to="/profile/index">
+            <i class="el-icon-setting"></i>账户设置
+          </router-link>
+        <a class="a1"><i class="el-icon-setting"></i>账户设置</a>
+        <a class="a2"><i class="el-icon-setting"></i>退出登录</a>
+      </template> -->
 
-        <error-log class="errLog-container right-menu-item hover-effect" />
-
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
-
-        <el-tooltip content="Global Size" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-      </template>
-
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
+      <!-- <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
           <i class="el-icon-caret-bottom" />
@@ -28,7 +26,7 @@
             <el-dropdown-item>Profile</el-dropdown-item>
           </router-link>
           <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
+            <el-dropdown-item>打样</el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
             <el-dropdown-item>Github</el-dropdown-item>
@@ -40,7 +38,7 @@
             <span style="display:block;">Log Out</span>
           </el-dropdown-item>
         </el-dropdown-menu>
-      </el-dropdown>
+      </el-dropdown> -->
     </div>
   </div>
 </template>
@@ -75,8 +73,14 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
+      console.log(111111)
       await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push(`/login`)
+    },
+    toggleClick() {
+      console.log(11111)
+      this.$store.dispatch('app/toggleSideBar')
+      // this.$emit('toggleClick')
     }
   }
 }
@@ -84,14 +88,40 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
-  height: 50px;
+  height: 80px;
   overflow: hidden;
   position: relative;
-  background: #fff;
+  // background: #fff;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
-
+  background-color: #7764CA;
+  color: #fff;
+  .logoing{
+    float: left;
+    margin: 13px 0px 0px 20px;
+  }
+  .p1{
+    float: left;
+    color: #fff;
+    font-size: 18px;
+    line-height: 45px;
+    font-weight: 700;
+    margin-left: 30px;
+    }
+    .a1 , .a2{
+      float: right;
+      color: #fff;
+      font-size: 16px;
+      line-height: 80px;
+      margin-right: 20px;
+    }
+    .setimg{
+        width: 15px;
+        height: 15px;
+        float: left;
+        margin: 33px 0px 0px 12px;
+    }
   .hamburger-container {
-    line-height: 46px;
+    line-height: 80px;
     height: 100%;
     float: left;
     cursor: pointer;
@@ -115,8 +145,7 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 50px;
-
+    line-height: 80px;
     &:focus {
       outline: none;
     }
